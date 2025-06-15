@@ -19,5 +19,5 @@ spring:
 server:
   port: 0
 
-client:
-  url: http://localhost:9090
+service:
+  stats-server: stats-server
