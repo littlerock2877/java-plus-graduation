@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.user.dto.UserDto;
-import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.entityparam.AdminUserParam;
 import ru.practicum.user.service.UserService;
 
