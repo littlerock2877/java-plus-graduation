@@ -44,4 +44,6 @@ public interface EventService {
     List<EventFullDto> adminGetEventsLikedByUser(Integer userId);
 
     List<EventShortDto> getAllLikedEvents(Integer userId);
+
+    EventFullDto adminGetEventById(Integer eventId);
 }

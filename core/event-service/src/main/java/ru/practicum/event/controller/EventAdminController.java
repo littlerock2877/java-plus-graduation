@@ -54,4 +54,12 @@ public class EventAdminController {
         log.info("Getting events by {} - Finished", userId);
         return events;
     }
+
+    @GetMapping("/{eventId}")
+    public EventFullDto adminGetFullEvent(@PathVariable Integer eventId) {
+        log.info("Getting event by id {} - Started", eventId);
+        EventFullDto event = eventService.adminGetEventById(eventId);
+        log.info("Getting event by id {} - Finished", eventId);
+        return event;
+    }
 }

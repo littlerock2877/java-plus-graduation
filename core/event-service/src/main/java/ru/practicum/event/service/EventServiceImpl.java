@@ -226,6 +226,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    public EventFullDto adminGetEventById(Integer eventId) {
+        return eventMapper.toEventFullDto(
+                eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id %d was not found".formatted(eventId)))
+        );
+    }
+
+    @Override
     public List<EventShortDto> publicGetAllEvents(EventRequestParam eventRequestParam) {
         Pageable page = PageRequest.of(eventRequestParam.getFrom() / eventRequestParam.getSize(), eventRequestParam.getSize());
 

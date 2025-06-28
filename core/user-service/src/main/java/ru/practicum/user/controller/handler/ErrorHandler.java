@@ -1,6 +1,7 @@
 package ru.practicum.user.controller.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -41,6 +42,18 @@ public class ErrorHandler {
         Map map = new LinkedHashMap<String, String>();
         map.put("status", HttpStatus.BAD_REQUEST.name());
         map.put("reason", "Incorrectly made request.");
+        map.put("message", e.getMessage());
+        map.put("timestamp", LocalDateTime.now().format(formatter));
+        return map;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleDataIntegrityViolation(final DataIntegrityViolationException e) {
+        log.error("DataIntegrityViolationException with message {} was thrown", e.getMessage());
+        Map map = new LinkedHashMap<String, String>();
+        map.put("status", HttpStatus.CONFLICT.name());
+        map.put("reason", "Integrity constraint has been violated.");
         map.put("message", e.getMessage());
         map.put("timestamp", LocalDateTime.now().format(formatter));
         return map;

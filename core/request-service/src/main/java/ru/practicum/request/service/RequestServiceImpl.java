@@ -58,7 +58,7 @@ public class RequestServiceImpl implements RequestService {
             throw new InvalidParameterException("request already confirmed");
         }
 
-        if (event.getConfirmedRequests() + requestsToUpdate.size() > event.getParticipantLimit() && requestStatusUpdateRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
+        if (getConfirmedRequestsCount(event.getId()) + requestsToUpdate.size() > event.getParticipantLimit() && requestStatusUpdateRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
             throw new InvalidParameterException("exceeding the limit of participants");
         }
 
