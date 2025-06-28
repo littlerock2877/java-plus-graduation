@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationMapper compilationMapper;
     private final CompilationRepository compilationRepository;
-
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final CategoryRepository categoryRepository;
