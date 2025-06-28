@@ -30,13 +30,13 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
                                 Pageable page);
 
     @Query("SELECT e FROM Event e " +
-            "WHERE (:text IS NULL OR (e.title ILIKE %:text% " +
-            "OR e.description ILIKE %:text% " +
-            "OR e.annotation ILIKE %:text%)) " +
+            "WHERE (:text IS NULL OR (LOWER(e.title) LIKE LOWER(CONCAT('%', :text, '%')) " +
+            "OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%')) " +
+            "OR LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')))) " +
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
             "AND (:paid IS NULL OR e.paid = :paid) " +
             "AND e.eventDate BETWEEN :rangeStart AND :rangeEnd " +
-            "AND (:onlyAvailable IS NULL OR e.state = ru.practicum.main_service.event.enums.EventState.PUBLISHED)")
+            "AND (:onlyAvailable IS NULL OR e.state = 'PUBLISHED')")
     List<Event> findPublicEvents(@Param("text") String text,
                                  @Param("categories") List<Integer> categories,
                                  @Param("paid") Boolean paid,
