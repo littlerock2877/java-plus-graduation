@@ -227,10 +227,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto adminGetEventById(Integer eventId) {
-        return eventMapper.toEventFullDto(
-                eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event with id %d was not found".formatted(eventId)))
-        );
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
+        return eventMapper.toEventFullDto(event);
     }
 
     @Override
