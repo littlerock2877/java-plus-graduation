@@ -185,10 +185,6 @@ public class EventServiceImpl implements EventService {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
 
-        if (updateEventAdminRequest.getConfirmedRequests() != null) {
-            event.setConfirmedRequests(updateEventAdminRequest.getConfirmedRequests());
-        }
-
         return eventMapper.toEventFullDto(eventRepository.save(event));
     }
 
