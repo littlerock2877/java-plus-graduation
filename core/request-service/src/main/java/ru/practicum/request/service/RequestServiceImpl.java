@@ -7,6 +7,7 @@ import ru.practicum.request.client.UserClient;
 import ru.practicum.request.dto.EventFullDto;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
+import ru.practicum.request.dto.EventShortDto;
 import ru.practicum.request.dto.RequestDto;
 import ru.practicum.request.enums.RequestStatus;
 import ru.practicum.request.exception.NotFoundException;
@@ -17,6 +18,7 @@ import ru.practicum.request.repository.RequestRepository;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,13 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestDto> getRequestsByOwnerOfEvent(Integer userId, Integer eventId) {
-        return requestRepository.findAllByEventWithInitiator(userId, eventId).stream().map(request -> requestMapper.toRequestDto(request)).toList();
+        List<EventShortDto> events = eventClient.getEventsByUser(userId, 0, 1000);
+        return requestRepository.findAllByEventIn(events.stream()
+                        .map(EventShortDto::getId)
+                        .filter(id -> Objects.equals(id, eventId))
+                .toList()).stream()
+                .map(requestMapper::toRequestDto)
+                .toList();
     }
 
     @Override
@@ -39,8 +47,11 @@ public class RequestServiceImpl implements RequestService {
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             return result;
         }
-
-        List<Request> requests = requestRepository.findAllByEventWithInitiator(userId, eventId);
+        List<EventShortDto> events = eventClient.getEventsByUser(userId, 0, 1000);
+        List<Request> requests = requestRepository.findAllByEventIn(events.stream()
+                .map(EventShortDto::getId)
+                .filter(id -> Objects.equals(id, eventId))
+                .toList());
         List<Request> requestsToUpdate = requests.stream().filter(request -> requestStatusUpdateRequest.getRequestIds().contains(request.getId())).toList();
 
         if (requestsToUpdate.stream().anyMatch(request -> request.getStatus().equals(RequestStatus.CONFIRMED) && requestStatusUpdateRequest.getStatus().equals(RequestStatus.REJECTED))) {
