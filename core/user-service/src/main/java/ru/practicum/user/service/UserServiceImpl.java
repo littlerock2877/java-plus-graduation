@@ -1,15 +1,16 @@
-package ru.practicum.main_service.user.service;
+package ru.practicum.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.main_service.exception.NotFoundException;
-import ru.practicum.main_service.user.dto.UserDto;
-import ru.practicum.main_service.user.entityParam.AdminUserParam;
-import ru.practicum.main_service.user.mapper.UserMapper;
-import ru.practicum.main_service.user.model.User;
-import ru.practicum.main_service.user.repository.UserRepository;
+import ru.practicum.user.dto.UserDto;
+import ru.practicum.user.entityparam.AdminUserParam;
+import ru.practicum.user.exception.NotFoundException;
+import ru.practicum.user.mapper.UserMapper;
+import ru.practicum.user.model.User;
+import ru.practicum.user.repository.UserRepository;
+
 import java.util.List;
 
 @Service
@@ -21,6 +22,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = userRepository.save(userMapper.toModel(userDto));
+        return userMapper.toUserDto(user);
+    }
+
+    @Override
+    public UserDto findById(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id=%d was not found", userId)));
         return userMapper.toUserDto(user);
     }
 

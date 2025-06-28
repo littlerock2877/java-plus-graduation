@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.main_service.categories.model.Category;
 import ru.practicum.main_service.categories.repository.CategoryRepository;
+import ru.practicum.main_service.client.UserClient;
 import ru.practicum.main_service.event.dto.*;
 import ru.practicum.main_service.event.enums.EventState;
 import ru.practicum.main_service.event.enums.StateActionForAdmin;
@@ -21,10 +22,8 @@ import ru.practicum.main_service.event.repository.LikeRepository;
 import ru.practicum.main_service.event.repository.LocationRepository;
 import ru.practicum.main_service.exception.EventDateValidationException;
 import ru.practicum.main_service.exception.NotFoundException;
+import ru.practicum.main_service.user.dto.UserDto;
 import ru.practicum.main_service.user.dto.UserShortDto;
-import ru.practicum.main_service.user.mapper.UserMapper;
-import ru.practicum.main_service.user.model.User;
-import ru.practicum.main_service.user.repository.UserRepository;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -35,8 +34,7 @@ import java.util.*;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final UserClient userClient;
     private final LocationRepository locationRepository;
     private final LikeRepository likeRepository;
     private final EventMapper eventMapper;
@@ -57,9 +55,8 @@ public class EventServiceImpl implements EventService {
         }
         Category category = categoryRepository.findById(newEventDto.getCategory())
                 .orElseThrow(() -> new NotFoundException(String.format("Category with id=%d was not found", newEventDto.getCategory())));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("User with id=%d was not found", userId)));
-        Event event = eventMapper.toModelByNew(newEventDto, category, user);
+        UserDto userDto = userClient.findById(userId);
+        Event event = eventMapper.toModelByNew(newEventDto, category, userDto.getId());
         event.setLocation(locationRepository.save(newEventDto.getLocation()));
         if (newEventDto.getPaid() == null) {
             event.setPaid(false);
@@ -272,11 +269,11 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Long addLike(Integer userId, Integer eventId) {
-        User user = getUser(userId);
+        UserDto userDto = userClient.findById(userId);
         Event event = getEvent(eventId);
 
         if (!likeRepository.existsByUserIdAndEventId(userId, eventId)) {
-            Like like = new Like(user, event);
+            Like like = new Like(userId, event);
             likeRepository.save(like);
         }
         return likeRepository.countByEventId(eventId);
@@ -291,15 +288,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<UserShortDto> getLikedUsers(Integer eventId) {
+    public List<UserDto> getLikedUsers(Integer eventId) {
         Event event = getEvent(eventId);
         addViews("/events/" + event.getId(), event);
         List<Like> likes = likeRepository.findAllByEventId(eventId);
-        return likes.stream().map(like -> userMapper.toUserShortDto(like.getUser())).toList();
+        return likes.stream().map(like -> userClient.findById(like.getUserId())).toList();
     }
 
     private List<Integer> getEventIdsLikedByUser(Integer userId) {
-        User user = getUser(userId);
+        getUser(userId);
         List<Like> likes = likeRepository.findAllByUserId(userId);
         if (likes.isEmpty()) {
             throw new NotFoundException(String.format("User with id=%d did not like any events", userId));
@@ -319,9 +316,8 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private User getUser(Integer userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("User with id=%d was not found", userId)));
+    private UserDto getUser(Integer userId) {
+        return userClient.findById(userId);
     }
 
     private Event getEvent(Integer eventId) {

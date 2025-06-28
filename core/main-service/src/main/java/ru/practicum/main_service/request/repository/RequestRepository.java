@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface RequestRepository extends JpaRepository<Request, Integer> {
     @Query("select p from Request as p " +
             "join Event as e ON p.event = e.id " +
-            "where p.event = :eventId and e.initiator.id = :userId")
+            "where p.event = :eventId and e.initiatorId = :userId")
     List<Request> findAllByEventWithInitiator(@Param(value = "userId") Integer userId, @Param("eventId") Integer eventId);
 
     List<Request> findAllByRequester(Integer userId);

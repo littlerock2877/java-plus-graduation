@@ -16,8 +16,5 @@ spring:
         format_sql: true
         show_sql: true
 
-service:
-  stats-server: stats-server
-
 server:
   port: 0

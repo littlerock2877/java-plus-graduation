@@ -1,8 +1,9 @@
-package ru.practicum.main_service.user.service;
+package ru.practicum.user.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.main_service.user.dto.UserDto;
-import ru.practicum.main_service.user.entityParam.AdminUserParam;
+import ru.practicum.user.dto.UserDto;
+import ru.practicum.user.entityparam.AdminUserParam;
+
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -14,4 +15,6 @@ public interface UserService {
     void deleteUser(Integer userId);
 
     List<UserDto> getUsers(AdminUserParam userParam);
+
+    UserDto findById(Integer userId);
 }

@@ -1,13 +1,23 @@
-package ru.practicum.main_service.user.controller;
+package ru.practicum.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import ru.practicum.main_service.user.dto.UserDto;
-import ru.practicum.main_service.user.entityParam.AdminUserParam;
-import ru.practicum.main_service.user.service.UserService;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.user.dto.UserDto;
+import ru.practicum.user.dto.UserShortDto;
+import ru.practicum.user.entityparam.AdminUserParam;
+import ru.practicum.user.service.UserService;
+
 import java.util.List;
 
 @RestController
@@ -26,6 +36,14 @@ public class UserAdminController {
         List<UserDto> users = userService.getUsers(userParam);
         log.info("Getting users with ids {} - Finished", ids);
         return users;
+    }
+
+    @GetMapping("/{userId}")
+    public UserDto findUserById(@PathVariable Integer userId) {
+        log.debug("Finding user with id {} - Started", userId);
+        UserDto foundUser = userService.findById(userId);
+        log.info("Finding user with id {} - Started", userId);
+        return foundUser;
     }
 
     @PostMapping

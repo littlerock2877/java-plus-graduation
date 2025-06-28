@@ -1,7 +1,7 @@
 spring:
   datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:ewm
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6540/ewm
     username: sa
     password: password
     initialization-mode: always
@@ -15,9 +15,6 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
-
-service:
-  stats-server: stats-server
 
 server:
   port: 0

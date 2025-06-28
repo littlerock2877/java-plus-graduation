@@ -1,7 +1,8 @@
-package ru.practicum.main_service.user.entityParam;
+package ru.practicum.user.entityparam;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
 import java.util.List;
 
 @Data

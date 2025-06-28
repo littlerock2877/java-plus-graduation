@@ -2,6 +2,7 @@ package ru.practicum.main_service.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.main_service.client.UserClient;
 import ru.practicum.main_service.event.model.Event;
 import ru.practicum.main_service.event.repository.EventRepository;
 import ru.practicum.main_service.exception.NotFoundException;
@@ -12,7 +13,6 @@ import ru.practicum.main_service.request.enums.RequestStatus;
 import ru.practicum.main_service.request.mapper.RequestMapper;
 import ru.practicum.main_service.request.model.Request;
 import ru.practicum.main_service.request.repository.RequestRepository;
-import ru.practicum.main_service.user.repository.UserRepository;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.List;
 public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    private final UserClient userClient;
     private final RequestMapper requestMapper;
 
     @Override
@@ -76,7 +76,7 @@ public class RequestServiceImpl implements RequestService {
         }
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
-        if (event.getInitiator().getId().equals(userId)) {
+        if (event.getInitiatorId().equals(userId)) {
             throw new InvalidParameterException("Can't create request by initiator");
         }
 
@@ -103,8 +103,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestDto> getCurrentUserRequests(Integer userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("User with id=%d was not found", userId)));
+        userClient.findById(userId);
         return requestRepository.findAllByRequester(userId).stream().map(request -> requestMapper.toRequestDto(request)).toList();
     }
 

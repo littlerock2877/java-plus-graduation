@@ -9,8 +9,6 @@ import ru.practicum.main_service.event.dto.EventShortDto;
 import ru.practicum.main_service.event.dto.NewEventDto;
 import ru.practicum.main_service.event.enums.EventState;
 import ru.practicum.main_service.event.model.Event;
-import ru.practicum.main_service.user.mapper.UserMapper;
-import ru.practicum.main_service.user.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventMapper {
     private final CategoryMapper categoryMapper;
-    private final UserMapper userMapper;
 
     public EventFullDto toEventFullDto(Event event) {
         return EventFullDto.builder()
@@ -27,7 +24,7 @@ public class EventMapper {
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
                 .eventDate(event.getEventDate())
-                .initiator(userMapper.toUserShortDto(event.getInitiator()))
+                .initiatorId(event.getInitiatorId())
                 .paid(event.getPaid())
                 .title(event.getTitle())
                 .views(event.getViews())
@@ -41,7 +38,7 @@ public class EventMapper {
                 .build();
     }
 
-    public Event toModelByNew(NewEventDto newEventDto, Category category, User initiator) {
+    public Event toModelByNew(NewEventDto newEventDto, Category category, Integer initiatorId) {
         return new Event(0,
                 newEventDto.getAnnotation(),
                 category,
@@ -49,7 +46,7 @@ public class EventMapper {
                 LocalDateTime.now(),
                 newEventDto.getDescription(),
                 newEventDto.getEventDate(),
-                initiator,
+                initiatorId,
                 newEventDto.getLocation(),
                 newEventDto.getPaid(),
                 newEventDto.getParticipantLimit(),
@@ -67,7 +64,7 @@ public class EventMapper {
                 categoryMapper.toCategoryDto(event.getCategory()),
                 event.getConfirmedRequests(),
                 event.getEventDate(),
-                userMapper.toUserShortDto(event.getInitiator()),
+                event.getInitiatorId(),
                 event.getPaid(),
                 event.getTitle(),
                 event.getViews()

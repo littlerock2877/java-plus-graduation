@@ -12,6 +12,7 @@ import ru.practicum.main_service.event.dto.EventRequestParam;
 import ru.practicum.main_service.event.dto.EventShortDto;
 import ru.practicum.main_service.event.enums.EventSort;
 import ru.practicum.main_service.event.service.EventService;
+import ru.practicum.main_service.user.dto.UserDto;
 import ru.practicum.main_service.user.dto.UserShortDto;
 import ru.practicum.main_service.utility.Constants;
 
@@ -56,10 +57,10 @@ public class EventPublicController {
     }
 
     @GetMapping("/{eventId}/likes")
-    public List<UserShortDto> publicGetLikedUsers(@PathVariable("eventId") Integer eventId, HttpServletRequest request) {
+    public List<UserDto> publicGetLikedUsers(@PathVariable("eventId") Integer eventId, HttpServletRequest request) {
         log.info("Getting liked users for event with id {} - Started", eventId);
         saveHit(request);
-        List<UserShortDto> likedUsers = eventService.getLikedUsers(eventId);
+        List<UserDto> likedUsers = eventService.getLikedUsers(eventId);
         log.info("Getting liked users for event with id {} - Finished", eventId);
         return likedUsers;
     }
