@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.event.client.RequestClient;
 import ru.practicum.event.dto.UpdateEventUserDto;
 import ru.practicum.event.service.EventService;
 import ru.practicum.event.dto.EventFullDto;
@@ -19,7 +18,6 @@ import java.util.List;
 @RequestMapping("/users/{userId}/events")
 public class EventPrivateController {
     private final EventService eventService;
-    private final RequestClient requestClient;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

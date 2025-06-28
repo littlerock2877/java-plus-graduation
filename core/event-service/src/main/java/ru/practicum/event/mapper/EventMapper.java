@@ -25,7 +25,7 @@ public class EventMapper {
                 .category(categoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
                 .eventDate(event.getEventDate())
-                .initiatorId(event.getInitiatorId())
+                .initiator(event.getInitiatorId())
                 .paid(event.getPaid())
                 .title(event.getTitle())
                 .views(event.getViews())

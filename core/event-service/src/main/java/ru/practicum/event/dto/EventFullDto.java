@@ -19,7 +19,7 @@ public class EventFullDto {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss")
     private LocalDateTime eventDate;
-    private Integer initiatorId;
+    private Integer initiator;
     private Boolean paid;
     private String title;
     private Long views;

@@ -10,6 +10,7 @@ import ru.practicum.categories.model.Category;
 import ru.practicum.categories.repository.CategoryRepository;
 import ru.practicum.dto.UserDto;
 import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.event.client.RequestClient;
 import ru.practicum.event.client.UserClient;
 import ru.practicum.event.dto.AdminEventParams;
 import ru.practicum.event.dto.EventFullDto;
@@ -45,6 +46,7 @@ public class EventServiceImpl implements EventService {
     private final LikeRepository likeRepository;
     private final EventMapper eventMapper;
     private final RestStatClient restStatClient;
+    private final RequestClient requestClient;
     private static final String START = "1970-01-01 00:00:00";
     private static final String END = "3000-12-31 23:59:59";
 
@@ -183,6 +185,10 @@ public class EventServiceImpl implements EventService {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
 
+        if (updateEventAdminRequest.getConfirmedRequests() != null) {
+            event.setConfirmedRequests(updateEventAdminRequest.getConfirmedRequests());
+        }
+
         return eventMapper.toEventFullDto(eventRepository.save(event));
     }
 
@@ -202,6 +208,7 @@ public class EventServiceImpl implements EventService {
                 adminEventParams.getRangeStart(),
                 adminEventParams.getRangeEnd(),
                 page));
+        events.forEach(event -> event.setConfirmedRequests(requestClient.getConfirmedRequestsCount(event.getId())));
         if (events.isEmpty()) {
             return List.of();
         }
@@ -242,7 +249,7 @@ public class EventServiceImpl implements EventService {
                 eventRequestParam.getRangeStart(),
                 eventRequestParam.getRangeEnd(),
                 eventRequestParam.getOnlyAvailable(),
-                page);
+                page).toList();
         if (events.isEmpty()) {
             return List.of();
         }

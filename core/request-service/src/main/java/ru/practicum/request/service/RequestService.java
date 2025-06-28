@@ -21,4 +21,6 @@ public interface RequestService {
 
     @Transactional
     RequestDto cancelRequests(Integer userId, Integer requestId);
+
+    Long getConfirmedRequestsCount(Integer eventId);
 }

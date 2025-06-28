@@ -11,8 +11,8 @@ import java.util.List;
 
 @FeignClient(name = "event-service", configuration = FeignConfig.class)
 public interface EventClient {
-    @GetMapping("/admin/events/{eventId}")
-    EventFullDto findById(Integer eventId);
+    @GetMapping("/events/{eventId}")
+    EventFullDto findById(@PathVariable("eventId") Integer eventId);
 
     @GetMapping("/users/{userId}/events")
     List<EventShortDto> getEventsByUser(@PathVariable Integer userId,

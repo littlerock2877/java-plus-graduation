@@ -2,10 +2,10 @@ package ru.practicum.event.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import ru.practicum.dto.UserDto;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "request-service", configuration = FeignConfig.class)
 public interface RequestClient {
-    @GetMapping("/{userId}")
-    UserDto findById(Integer userId);
+    @GetMapping("/admin/requests/count")
+    Long getConfirmedRequestsCount(@RequestParam Integer eventId);
 }

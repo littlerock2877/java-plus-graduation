@@ -70,11 +70,11 @@ public class RequestServiceImpl implements RequestService {
            event.setConfirmedRequests(event.getConfirmedRequests() + requestsToUpdate.size());
         }
         if (requestStatusUpdateRequest.getStatus().equals(RequestStatus.CONFIRMED)) {
-            result.setConfirmedRequests(requestsToUpdate.stream().map(request -> requestMapper.toParticipationRequestDto(request)).toList());
+            result.setConfirmedRequests(requestsToUpdate.stream().map(requestMapper::toParticipationRequestDto).toList());
         }
 
         if (requestStatusUpdateRequest.getStatus().equals(RequestStatus.REJECTED)) {
-            result.setRejectedRequests(requestsToUpdate.stream().map(request -> requestMapper.toParticipationRequestDto(request)).toList());
+            result.setRejectedRequests(requestsToUpdate.stream().map(requestMapper::toParticipationRequestDto).toList());
         }
         return result;
     }
@@ -85,7 +85,7 @@ public class RequestServiceImpl implements RequestService {
             throw new InvalidParameterException("Request already exists");
         }
         EventFullDto event = eventClient.findById(eventId);
-        if (event.getInitiatorId().equals(userId)) {
+        if (event.getInitiator().equals(userId)) {
             throw new InvalidParameterException("Can't create request by initiator");
         }
 
@@ -122,5 +122,10 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new NotFoundException(String.format("Request with id=%d was not found", requestId)));
         request.setStatus(RequestStatus.CANCELED);
         return requestMapper.toRequestDto(requestRepository.save(request));
+    }
+
+    @Override
+    public Long getConfirmedRequestsCount(Integer eventId) {
+        return requestRepository.countConfirmedRequests(eventId);
     }
 }

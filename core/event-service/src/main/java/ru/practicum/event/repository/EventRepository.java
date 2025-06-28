@@ -9,6 +9,7 @@ import ru.practicum.categories.model.Category;
 import ru.practicum.event.model.Event;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,21 +30,25 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
                                 @Param("rangeEnd") LocalDateTime rangeEnd,
                                 Pageable page);
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE (:text IS NULL OR (LOWER(e.title) LIKE LOWER(CONCAT('%', :text, '%')) " +
+    @Query("SELECT e FROM Event e WHERE " +
+            "(COALESCE(:text, '') = '' OR " +
+            "LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) " +
             "OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%')) " +
-            "OR LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')))) " +
+            "OR LOWER(e.title) LIKE LOWER(CONCAT('%', :text, '%'))) " +
             "AND (:categories IS NULL OR e.category.id IN :categories) " +
             "AND (:paid IS NULL OR e.paid = :paid) " +
             "AND e.eventDate BETWEEN :rangeStart AND :rangeEnd " +
-            "AND (:onlyAvailable IS NULL OR e.state = 'PUBLISHED')")
-    List<Event> findPublicEvents(@Param("text") String text,
-                                 @Param("categories") List<Integer> categories,
-                                 @Param("paid") Boolean paid,
-                                 @Param("rangeStart") LocalDateTime rangeStart,
-                                 @Param("rangeEnd") LocalDateTime rangeEnd,
-                                 @Param("onlyAvailable") Boolean onlyAvailable,
-                                 Pageable pageable);
+            "AND (:onlyAvailable IS NULL OR e.state = ru.practicum.event.enums.EventState.PUBLISHED)")
+    Page<Event> findPublicEvents(
+            @Param("text") String text,
+            @Param("categories") List<Integer> categories,
+            @Param("paid") Boolean paid,
+            @Param("rangeStart") LocalDateTime rangeStart,
+            @Param("rangeEnd") LocalDateTime rangeEnd,
+            @Param("onlyAvailable") Boolean onlyAvailable,
+            Pageable pageable);
 
     Optional<Event> findByCategory(Category category);
+
+    List<Event> findAllByIdIsIn(Collection<Integer> ids);
 }
