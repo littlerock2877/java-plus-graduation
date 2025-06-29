@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS events
     description VARCHAR(7000),
     event_date TIMESTAMP WITHOUT TIME ZONE,
     created_on TIMESTAMP WITHOUT TIME ZONE,
-    initiator_id INTEGER ON DELETE CASCADE,
+    initiator_id INTEGER NOT NULL,
     location_id INTEGER REFERENCES locations(id) ON DELETE CASCADE,
     paid BOOLEAN,
     participant_limit BIGINT,
