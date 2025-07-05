@@ -1,11 +1,11 @@
 aggregator:
   kafka:
     producer-properties:
-      "bootstrap.servers": kafka:29092
+      "bootstrap.servers": kafka:9092
       "key.serializer": org.apache.kafka.common.serialization.StringSerializer
       "value.serializer": kafka.serializer.GeneralAvroSerializer
     consumer-properties:
-      "bootstrap.servers": kafka:29092
+      "bootstrap.servers": kafka:9092
       "group.id": aggregator-group
       "key.deserializer": org.apache.kafka.common.serialization.StringDeserializer
       "value.deserializer": kafka.serializer.UserActionDeserializer

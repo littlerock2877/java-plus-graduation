@@ -1,7 +1,7 @@
 collector:
   kafka:
     producer-properties:
-      "bootstrap.servers": kafka:29092
+      "bootstrap.servers": kafka:9092
       "client.id": stats.collector
       "key.serializer": org.apache.kafka.common.serialization.StringSerializer
       "value.serializer": kafka.serializer.GeneralAvroSerializer
