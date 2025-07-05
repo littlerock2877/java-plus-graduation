@@ -60,6 +60,7 @@ public class EventPublicController {
         log.info("Getting public event with id {} - Started", eventId);
         EventFullDto event = eventService.publicGetEvent(eventId);
         log.info("Getting public event with id {} - Finished", eventId);
+        restStatClient.collectUserAction(userId, eventId, UserActionType.VIEW);
         return event;
     }
 
@@ -77,6 +78,7 @@ public class EventPublicController {
         log.info("Adding like to event with id {} from user with id {} - Started", eventId, userId);
         long likeCount = eventService.addLike(userId, eventId);
         log.info("Adding like to event with id {} from user with id {} - Finished", eventId, userId);
+        restStatClient.collectUserAction(userId, eventId, UserActionType.LIKE);
         return likeCount;
     }
 
