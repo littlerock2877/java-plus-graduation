@@ -22,7 +22,7 @@ public class EventFullDto {
     private Integer initiator;
     private Boolean paid;
     private String title;
-    private Long views;
+    private double rating;
     private LocalDateTime createdOn;
     private String description;
     private Location location;

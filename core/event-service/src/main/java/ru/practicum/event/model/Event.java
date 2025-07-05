@@ -47,5 +47,5 @@
         @Enumerated(EnumType.STRING)
         private EventState state;
         private String title;
-        private Long views;
+        private double rating;
     }

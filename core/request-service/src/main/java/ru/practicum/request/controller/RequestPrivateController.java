@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewm.client.RestStatClient;
+import ru.practicum.ewm.client.UserActionType;
 import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.RequestDto;
@@ -25,6 +27,7 @@ import java.util.List;
 @RequestMapping("/users/{userId}")
 public class RequestPrivateController {
     private final RequestService requestService;
+    private final RestStatClient restStatClient;
 
     @PostMapping("/requests")
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,6 +35,7 @@ public class RequestPrivateController {
         log.info("Creating request by user with id {} for event with id {} - Started", userId, eventId);
         RequestDto requestDto = requestService.createRequest(userId, eventId);
         log.info("Creating request by user with id {} for event with id {} - Finished", userId, eventId);
+        restStatClient.collectUserAction(userId, eventId, UserActionType.REGISTER);
         return requestDto;
     }
 
