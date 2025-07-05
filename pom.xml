@@ -6,24 +6,23 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.4</version>
+        <version>3.3.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <name>Explore With Me</name>
-    <groupId>ru.practicum</groupId>
-    <artifactId>explore-with-me</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
 
     <modules>
-        <module>core</module>
-        <module>infra</module>
         <module>stats</module>
+        <module>infra</module>
+        <module>infra/config-server</module>
+        <module>infra/discovery-server</module>
+        <module>infra/gateway-server</module>
+        <module>core</module>
     </modules>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>22</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
         <lombok.version>1.18.34</lombok.version>
