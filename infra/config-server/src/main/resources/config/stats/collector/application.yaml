@@ -8,6 +8,9 @@ collector:
     topics:
       user-actions: stats.user-actions.v1
 
+server:
+  port: 0
+
 grpc:
   server:
     port: 0
