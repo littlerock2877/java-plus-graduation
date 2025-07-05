@@ -1,17 +1,21 @@
 package ru.practicum.event.controller;
 
+import client.CollectorClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.UserDto;
+import ru.practicum.event.dto.RecommendationDto;
 import ru.practicum.event.enums.EventSort;
 import ru.practicum.event.service.EventService;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventRequestParam;
 import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.recommendation.RecommendationService;
 import ru.practicum.utility.Constants;
+import ru.yandex.practicum.grpc.stats.actions.ActionTypeProto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +26,14 @@ import java.util.List;
 @Slf4j
 public class EventPublicController {
     private final EventService eventService;
+    private final CollectorClient collectorClient;
+    private final RecommendationService recommendationService;
+
+    @GetMapping("/recommendations")
+    public List<RecommendationDto> getRecommendations(
+            @RequestHeader("X-EWM-USER-ID") long userId, @RequestParam(name = "size", defaultValue = "10") int size) {
+        return recommendationService.getRecommendations(userId, size);
+    }
 
     @GetMapping
     public List<EventShortDto> publicGetEvents(@RequestParam(required = false) String text,
@@ -42,11 +54,11 @@ public class EventPublicController {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto publicGetEvent(@PathVariable("eventId") Integer eventId,
-                                       HttpServletRequest request) {
+    public EventFullDto publicGetEvent(@PathVariable("eventId") Integer eventId, @RequestHeader("X-EWM-USER-ID") long userId) {
         log.info("Getting public event with id {} - Started", eventId);
         EventFullDto event = eventService.publicGetEvent(eventId);
         log.info("Getting public event with id {} - Finished", eventId);
+        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_VIEW);
         return event;
     }
 

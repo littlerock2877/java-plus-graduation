@@ -263,7 +263,7 @@ public class EventServiceImpl implements EventService {
                         .map(eventMapper::toEventShortDto)
                         .toList();
                 case VIEWS -> events.stream()
-                        .sorted(Comparator.comparing(Event::getViews))
+                        .sorted(Comparator.comparing(Event::getRating))
                         .map(eventMapper::toEventShortDto)
                         .toList();
             };
