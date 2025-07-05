@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS events
     request_moderation BOOLEAN,
     state VARCHAR(120),
     title VARCHAR(120),
-    rating DOUBLE
+    rating DOUBLE PRECISION
 );
 
 CREATE TABLE IF NOT EXISTS compilations
