@@ -1,28 +1,13 @@
 services:
-  stats-db:
+  ewm-main-db:
     image: postgres:16.1
-    container_name: stats-db
+    container_name: ewm-main-db
     ports:
-      - "6541:5432"
+      - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=sa
-      - POSTGRES_DB=stat
-    healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
-      timeout: 5s
-      interval: 5s
-      retries: 10
-
-  ewm-db:
-    image: postgres:16.1
-    container_name: ewm-db
-    ports:
-      - "6540:5432"
-    environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=sa
-      - POSTGRES_DB=ewm
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ewm-main
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
@@ -33,8 +18,6 @@ services:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka
     container_name: kafka
-    networks:
-      - ewm-net
     ports:
       - "9092:9092" # for client connections
       - "9101:9101" # JMX
@@ -62,6 +45,3 @@ services:
                              --partitions 1 --replication-factor 1 --if-not-exists \
                              --bootstrap-server kafka:29092'"
     init: true
-
-networks:
-  ewm-net:
