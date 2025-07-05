@@ -35,6 +35,15 @@ public class EventPublicController {
         return recommendationService.getRecommendations(userId, size);
     }
 
+    @PutMapping("/{eventId}/like")
+    public Long addLike(@RequestHeader("X-EWM-USER-ID") Integer userId, @PathVariable Integer eventId) {
+        log.info("Adding like to event with id {} from user with id {} - Started", eventId, userId);
+        long likeCount = eventService.addLike(userId, eventId);
+        log.info("Adding like to event with id {} from user with id {} - Finished", eventId, userId);
+        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
+        return likeCount;
+    }
+
     @GetMapping
     public List<EventShortDto> publicGetEvents(@RequestParam(required = false) String text,
                                                @RequestParam(required = false) List<Integer> categories,

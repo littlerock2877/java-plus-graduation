@@ -67,16 +67,6 @@ public class EventPrivateController {
         return createdDto;
     }
 
-    @PostMapping("/{eventId}/like")
-    public Long addLike(@PathVariable(name = "eventId") Integer eventId,
-                        @PathVariable(name = "userId") Integer userId) {
-        log.info("Adding like to event with id {} from user with id {} - Started", eventId, userId);
-        long likeCount = eventService.addLike(userId, eventId);
-        log.info("Adding like to event with id {} from user with id {} - Finished", eventId, userId);
-        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
-        return likeCount;
-    }
-
     @DeleteMapping("/{eventId}/like")
     @ResponseStatus(HttpStatus.GONE)
     public Long removeLike(@PathVariable(name = "eventId") Integer eventId,
