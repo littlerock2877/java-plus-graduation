@@ -6,7 +6,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.retry.annotation.EnableRetry;
 
 @SpringBootApplication
-@EnableDiscoveryClient
 @EnableRetry
 @EnableKafka
 public class CollectorApp {
