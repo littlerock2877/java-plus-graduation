@@ -1,34 +1,22 @@
 spring:
-  application:
-    name: request-service
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ewm_request
+    username: sa
+    password: password
+  sql:
+    init:
+      mode: always
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         format_sql: true
-    show-sql: true
-  sql:
-    init:
-      mode: always
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/ewm-main
-    username: user
-    password: password
+        show_sql: true
 
 server:
   port: 0
 
-grpc:
-  client:
-    analyzer:
-      address: "discovery:///analyzer"
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiationType: PLAINTEXT
-    collector:
-      address: "discovery:///collector"
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiationType: PLAINTEXT
+service:
+  stats-server: stats-server
