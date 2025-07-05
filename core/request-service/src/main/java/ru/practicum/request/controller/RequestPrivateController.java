@@ -35,7 +35,7 @@ public class RequestPrivateController {
         log.info("Creating request by user with id {} for event with id {} - Started", userId, eventId);
         RequestDto requestDto = requestService.createRequest(userId, eventId);
         log.info("Creating request by user with id {} for event with id {} - Finished", userId, eventId);
-        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_REGISTER);
+        collectorClient.sendEventRegistration(userId, eventId);
         return requestDto;
     }
 

@@ -40,7 +40,7 @@ public class EventPublicController {
         log.info("Adding like to event with id {} from user with id {} - Started", eventId, userId);
         long likeCount = eventService.addLike(userId, eventId);
         log.info("Adding like to event with id {} from user with id {} - Finished", eventId, userId);
-        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
+        collectorClient.sendEventLike(userId, eventId);
         return likeCount;
     }
 
@@ -67,7 +67,7 @@ public class EventPublicController {
         log.info("Getting public event with id {} - Started", eventId);
         EventFullDto event = eventService.publicGetEvent(eventId);
         log.info("Getting public event with id {} - Finished", eventId);
-        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_VIEW);
+        collectorClient.sendEventView(userId, eventId);
         return event;
     }
 

@@ -20,7 +20,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     public List<RecommendationDto> getRecommendations(long userId, int size) {
         log.info("call analyzerClient.getRecommendedEventForUser: userId = {}, size {}", userId, size);
         List<RecommendationMessages.RecommendedEventProto> recommendations =
-                analyzerClient.getRecommendedEventsForUser(userId, size).toList();
+                analyzerClient.getRecommendations(userId, size);
         log.info("analyzerClient.getRecommendedEventForUser  finished: userId = {}, size {}", userId, size);
         log.debug("result {}", recommendations);
         List<RecommendationDto> recommendationDtos = new ArrayList<>();

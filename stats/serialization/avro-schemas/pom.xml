@@ -23,8 +23,9 @@
             <artifactId>avro</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
+            <groupId>org.wso2.orbit.io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>7.6.0.wso2v1</version>
         </dependency>
     </dependencies>
 

@@ -1,85 +1,55 @@
 package client;
 
-import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.stats.recommendations.proto.RecommendationMessages;
 import ru.yandex.practicum.grpc.stats.recommendations.proto.RecommendationsControllerGrpc;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Map;
 
-@Slf4j
-@Service
+@Component
 public class AnalyzerClient {
     @GrpcClient("analyzer")
     private RecommendationsControllerGrpc.RecommendationsControllerBlockingStub analyzerStub;
 
-    public Stream<RecommendationMessages.RecommendedEventProto> getRecommendedEventsForUser(
-            long userId, int size) {
-        try {
-            log.info("AnalyzerClient. Getting recommendation. UserId: {}, size: {}", userId, size);
-            RecommendationMessages.UserPredictionsRequestProto predictionsRequestProto =
-                    RecommendationMessages.UserPredictionsRequestProto.newBuilder()
-                            .setUserId(userId)
-                            .setMaxResults(size)
-                            .build();
-            Iterator<RecommendationMessages.RecommendedEventProto> responseIterator =
-                    analyzerStub.getRecommendationsForUser(predictionsRequestProto);
-            Stream<RecommendationMessages.RecommendedEventProto> result = asStream(responseIterator);
-            log.info("Recommendations get: {}", result);
-            return result;
-        } catch (Exception e) {
-            log.error("Error sending UserPredictionsRequestProto: userId {}, size {}", userId, size, e);
-            return Stream.empty();
-        }
+    public List<RecommendationMessages.RecommendedEventProto> getRecommendations(long userId, int maxResults) {
+        RecommendationMessages.UserPredictionsRequestProto request = RecommendationMessages.UserPredictionsRequestProto.newBuilder()
+                .setUserId(userId)
+                .setMaxResults(maxResults)
+                .build();
+
+        List<RecommendationMessages.RecommendedEventProto> recommendations = new ArrayList<>();
+        analyzerStub.getRecommendationsForUser(request)
+                .forEachRemaining(recommendations::add);
+
+        return recommendations;
     }
 
-    public Stream<RecommendationMessages.RecommendedEventProto> getSimilarEvent(
-            RecommendationMessages.SimilarEventsRequestProto similarEventsRequestProto) {
-        try {
-            log.info("AnalyzerClient. Getting similarEvents: {}", similarEventsRequestProto);
-            Iterator<RecommendationMessages.RecommendedEventProto> responseIterator =
-                    analyzerStub.getSimilarEvents(similarEventsRequestProto);
-            Stream<RecommendationMessages.RecommendedEventProto> result = asStream(responseIterator);
-            log.info("SimilarEvents get: {}", result);
-            return result;
-        } catch (Exception e) {
-            log.error("Error sending similarEventsRequestProto: {}", similarEventsRequestProto, e);
-            return Stream.empty();
-        }
+    public List<RecommendationMessages.RecommendedEventProto> getSimilarEvents(long eventId, long userId, int maxResults) {
+        RecommendationMessages.SimilarEventsRequestProto request = RecommendationMessages.SimilarEventsRequestProto.newBuilder()
+                .setEventId(eventId)
+                .setUserId(userId)
+                .setMaxResults(maxResults)
+                .build();
+
+        List<RecommendationMessages.RecommendedEventProto> similarEvents = new ArrayList<>();
+        analyzerStub.getSimilarEvents(request)
+                .forEachRemaining(similarEvents::add);
+
+        return similarEvents;
     }
 
-    public Stream<RecommendationMessages.RecommendedEventProto> getInteractionsCount(
-            List<Long> interactionsCountList) {
-        try {
-            log.info("AnalyzerClient. Getting InteractionsCount: {}", interactionsCountList);
+    public Map<Long, Double> getInteractionsCount(List<Long> eventIds) {
+        RecommendationMessages.InteractionsCountRequestProto request = RecommendationMessages.InteractionsCountRequestProto.newBuilder()
+                .addAllEventId(eventIds)
+                .build();
 
-            RecommendationMessages.InteractionsCountRequestProto.Builder builder =
-                    RecommendationMessages.InteractionsCountRequestProto.newBuilder();
-
-            interactionsCountList.forEach(builder::addEventId);
-
-            Iterator<RecommendationMessages.RecommendedEventProto> responseIterator =
-                    analyzerStub.getInteractionsCount(builder.build());
-            Stream<RecommendationMessages.RecommendedEventProto> result = asStream(responseIterator);
-            log.info("InteractionsCount get: {}", result);
-            return result;
-        } catch (Exception e) {
-            log.error("Error sending InteractionsCountRequestProto: {}", interactionsCountList, e);
-            return Stream.empty();
-        }
-    }
-
-    private Stream<RecommendationMessages.RecommendedEventProto> asStream(
-            Iterator<RecommendationMessages.RecommendedEventProto> iterator) {
-        return StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED),
-                false
-        );
+        Map<Long, Double> interactionsCount = new HashMap<>();
+        analyzerStub.getInteractionsCount(request)
+                .forEachRemaining(event -> interactionsCount.put(event.getEventId(), (double) event.getScore()));
+        return interactionsCount;
     }
 }
