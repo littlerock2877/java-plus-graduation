@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>event-service</module>
-        <module>interaction-api</module>
         <module>request-service</module>
         <module>user-service</module>
     </modules>
