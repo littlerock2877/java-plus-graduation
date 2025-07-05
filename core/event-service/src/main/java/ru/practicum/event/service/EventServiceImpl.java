@@ -1,6 +1,6 @@
 package ru.practicum.event.service;
 
-import client.RestStatClient;
+import client.AnalyzerClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.repository.CategoryRepository;
 import ru.practicum.dto.UserDto;
-import ru.practicum.dto.ViewStatsDto;
 import ru.practicum.event.client.RequestClient;
 import ru.practicum.event.client.UserClient;
 import ru.practicum.event.dto.AdminEventParams;
@@ -45,8 +44,8 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
     private final LikeRepository likeRepository;
     private final EventMapper eventMapper;
-    private final RestStatClient restStatClient;
     private final RequestClient requestClient;
+    private final AnalyzerClient analyzerClient;
     private static final String START = "1970-01-01 00:00:00";
     private static final String END = "3000-12-31 23:59:59";
 
@@ -269,16 +268,12 @@ public class EventServiceImpl implements EventService {
                         .toList();
             };
         }
-        for (Event event : events) {
-            addViews("/events/" + event.getId(), event);
-        }
         return events.stream().map(eventMapper::toEventShortDto).toList();
     }
 
     @Override
     public EventFullDto publicGetEvent(Integer eventId) {
         Event event = getEvent(eventId);
-        addViews("/events/" + event.getId(), event);
         EventFullDto eventFullDto = eventMapper.toEventFullDto(event);
         return eventFullDto;
     }
@@ -306,7 +301,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<UserDto> getLikedUsers(Integer eventId) {
         Event event = getEvent(eventId);
-        addViews("/events/" + event.getId(), event);
         List<Like> likes = likeRepository.findAllByEventId(eventId);
         return likes.stream().map(like -> userClient.findById(like.getUserId())).toList();
     }
@@ -321,15 +315,6 @@ public class EventServiceImpl implements EventService {
                 .map(Like::getEvent)
                 .map(Event::getId)
                 .toList();
-    }
-
-    private void addViews(String uri, Event event) {
-        ViewStatsDto[] views = restStatClient.getStats(START, END, List.of(uri), false).toArray(new ViewStatsDto[0]);
-        if (views.length == 0) {
-            event.setViews(0L);
-        } else {
-            event.setViews((long)views.length);
-        }
     }
 
     private UserDto getUser(Integer userId) {

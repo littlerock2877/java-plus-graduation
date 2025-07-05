@@ -1,12 +1,10 @@
 package ru.practicum.event.controller;
 
-import client.RestStatClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.UserDto;
 import ru.practicum.event.enums.EventSort;
 import ru.practicum.event.service.EventService;
@@ -24,7 +22,6 @@ import java.util.List;
 @Slf4j
 public class EventPublicController {
     private final EventService eventService;
-    private final RestStatClient restStatClient;
 
     @GetMapping
     public List<EventShortDto> publicGetEvents(@RequestParam(required = false) String text,
@@ -39,7 +36,6 @@ public class EventPublicController {
                                                HttpServletRequest request) {
         EventRequestParam reqParam = new EventRequestParam(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
         log.info("Getting public events - Started");
-        saveHit(request);
         List<EventShortDto> events = eventService.publicGetAllEvents(reqParam);
         log.info("Getting public events - Finished");
         return events;
@@ -49,7 +45,6 @@ public class EventPublicController {
     public EventFullDto publicGetEvent(@PathVariable("eventId") Integer eventId,
                                        HttpServletRequest request) {
         log.info("Getting public event with id {} - Started", eventId);
-        saveHit(request);
         EventFullDto event = eventService.publicGetEvent(eventId);
         log.info("Getting public event with id {} - Finished", eventId);
         return event;
@@ -58,18 +53,8 @@ public class EventPublicController {
     @GetMapping("/{eventId}/likes")
     public List<UserDto> publicGetLikedUsers(@PathVariable("eventId") Integer eventId, HttpServletRequest request) {
         log.info("Getting liked users for event with id {} - Started", eventId);
-        saveHit(request);
         List<UserDto> likedUsers = eventService.getLikedUsers(eventId);
         log.info("Getting liked users for event with id {} - Finished", eventId);
         return likedUsers;
-    }
-
-    private void saveHit(HttpServletRequest request) {
-        EndpointHitDto hit = new EndpointHitDto();
-        hit.setApp("main-service");
-        hit.setUri(request.getRequestURI());
-        hit.setIp(request.getRemoteAddr());
-        hit.setTimestamp(LocalDateTime.now().format(Constants.DATE_TIME_FORMATTER));
-        restStatClient.saveHit(hit);
     }
 }

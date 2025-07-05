@@ -18,8 +18,6 @@
         <module>aggregator</module>
         <module>serialization</module>
         <module>analyzer</module>
-        <module>serialization/avro-schemas</module>
-        <module>serialization/proto-schemas</module>
     </modules>
 
     <properties>

@@ -1,5 +1,6 @@
 package ru.practicum.event.controller;
 
+import client.CollectorClient;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import ru.practicum.event.service.EventService;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
+import ru.yandex.practicum.grpc.stats.actions.ActionTypeProto;
+
 import java.util.List;
 
 @RestController
@@ -18,6 +21,7 @@ import java.util.List;
 @RequestMapping("/users/{userId}/events")
 public class EventPrivateController {
     private final EventService eventService;
+    private final CollectorClient collectorClient;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -69,6 +73,7 @@ public class EventPrivateController {
         log.info("Adding like to event with id {} from user with id {} - Started", eventId, userId);
         long likeCount = eventService.addLike(userId, eventId);
         log.info("Adding like to event with id {} from user with id {} - Finished", eventId, userId);
+        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE);
         return likeCount;
     }
 

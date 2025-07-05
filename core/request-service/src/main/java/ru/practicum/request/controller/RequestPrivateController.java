@@ -1,5 +1,6 @@
 package ru.practicum.request.controller;
 
+import client.CollectorClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import ru.practicum.request.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.request.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.dto.RequestDto;
 import ru.practicum.request.service.RequestService;
+import ru.yandex.practicum.grpc.stats.actions.ActionTypeProto;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
 @RequestMapping("/users/{userId}")
 public class RequestPrivateController {
     private final RequestService requestService;
+    private CollectorClient collectorClient;
 
     @PostMapping("/requests")
     @ResponseStatus(HttpStatus.CREATED)
@@ -32,6 +35,7 @@ public class RequestPrivateController {
         log.info("Creating request by user with id {} for event with id {} - Started", userId, eventId);
         RequestDto requestDto = requestService.createRequest(userId, eventId);
         log.info("Creating request by user with id {} for event with id {} - Finished", userId, eventId);
+        collectorClient.sendUserAction(userId, eventId, ActionTypeProto.ACTION_REGISTER);
         return requestDto;
     }
 
