@@ -28,7 +28,7 @@ public class EventMapper {
                 .initiator(event.getInitiatorId())
                 .paid(event.getPaid())
                 .title(event.getTitle())
-                .views(event.getViews())
+                .rating(event.getRating())
                 .createdOn(event.getCreatedOn())
                 .description(event.getDescription())
                 .location(event.getLocation())
@@ -68,7 +68,7 @@ public class EventMapper {
                 event.getInitiatorId(),
                 event.getPaid(),
                 event.getTitle(),
-                event.getViews()
+                event.getRating()
         );
     }
 
