@@ -73,7 +73,7 @@ public class RecommendationsHandlerImpl implements RecommendationsHandler {
     }
 
     private List<EventSimilarity> findSimilarEvents(List<Long> eventIds, Sort sort) {
-        return eventSimilarityRepository.findAllByEventAInOrEventBIn(eventIds, eventIds, sort);
+        return eventSimilarityRepository.findByEventSimilarityId_EventAInOrEventSimilarityId_EventBIn(eventIds, eventIds, sort);
     }
 
     private List<Long> getUnvisitedEvents(List<EventSimilarity> similarities, Long userId) {
