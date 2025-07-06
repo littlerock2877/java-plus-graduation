@@ -37,8 +37,8 @@ public class AggregatorServiceImpl implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try {
-            consumer.subscribe(List.of(kafkaConfig.getTopic().getUser_action()));
             Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
+            consumer.subscribe(List.of(kafkaConfig.getTopic().getUser_action()));
             while (true) {
                 ConsumerRecords<Long, UserActionAvro> records =
                         consumer.poll(kafkaConfig.getConsumer().getPoll_duration_seconds());
