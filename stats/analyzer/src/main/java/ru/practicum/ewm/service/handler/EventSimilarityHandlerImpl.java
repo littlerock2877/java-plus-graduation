@@ -40,8 +40,7 @@ public class EventSimilarityHandlerImpl implements EventSimilarityHandler {
         }
         log.debug("Добавление нового события, так как его нет в базе");
         eventSimilarityRepository.save(EventSimilarity.builder()
-                .eventA(eventSimilarityAvro.getEventA())
-                .eventB(eventSimilarityAvro.getEventB())
+                .eventSimilarityId(new EventSimilarityId(eventSimilarityAvro.getEventA(), eventSimilarityAvro.getEventB()))
                 .score(eventSimilarityAvro.getScore())
                 .actionDate(eventSimilarityAvro.getTimestamp())
                 .build());

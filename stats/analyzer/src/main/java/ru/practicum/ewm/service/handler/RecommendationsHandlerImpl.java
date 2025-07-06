@@ -88,7 +88,7 @@ public class RecommendationsHandlerImpl implements RecommendationsHandler {
 
     private List<Long> extractAllEventIds(List<EventSimilarity> similarities) {
         return similarities.stream()
-                .flatMap(s -> Stream.of(s.getEventA(), s.getEventB()))
+                .flatMap(s -> Stream.of(s.getEventSimilarityId().getEventA(), s.getEventSimilarityId().getEventB()))
                 .toList();
     }
 
@@ -106,8 +106,8 @@ public class RecommendationsHandlerImpl implements RecommendationsHandler {
         for (EventSimilarity similarity : neighbours) {
             if (recommendations.size() >= maxResult) break;
 
-            Long eventA = similarity.getEventA();
-            Long eventB = similarity.getEventB();
+            Long eventA = similarity.getEventSimilarityId().getEventA();
+            Long eventB = similarity.getEventSimilarityId().getEventB();
 
             if (unvisitedEvents.contains(eventA)) recommendations.add(eventA);
             if (recommendations.size() < maxResult && unvisitedEvents.contains(eventB)) {
@@ -136,8 +136,8 @@ public class RecommendationsHandlerImpl implements RecommendationsHandler {
         for (EventSimilarity similarity : neighbours) {
             if (count >= maxCount) break;
 
-            processSimilarityPair(similarityMap, similarity, userActions, similarity.getEventA(), similarity.getEventB());
-            processSimilarityPair(similarityMap, similarity, userActions, similarity.getEventB(), similarity.getEventA());
+            processSimilarityPair(similarityMap, similarity, userActions, similarity.getEventSimilarityId().getEventA(), similarity.getEventSimilarityId().getEventB());
+            processSimilarityPair(similarityMap, similarity, userActions, similarity.getEventSimilarityId().getEventB(), similarity.getEventSimilarityId().getEventA());
             count++;
         }
 
@@ -194,15 +194,15 @@ public class RecommendationsHandlerImpl implements RecommendationsHandler {
     }
 
     private boolean isUnvisited(EventSimilarity similarity, List<Long> unvisitedEvents, Long sourceEventId) {
-        Long eventA = similarity.getEventA();
-        Long eventB = similarity.getEventB();
+        Long eventA = similarity.getEventSimilarityId().getEventA();
+        Long eventB = similarity.getEventSimilarityId().getEventB();
         return (eventA.equals(sourceEventId) && unvisitedEvents.contains(eventB)) ||
                 (eventB.equals(sourceEventId) && unvisitedEvents.contains(eventA));
     }
 
     private RecommendedEventProto buildRecommendedProto(EventSimilarity similarity, Long sourceEventId) {
-        Long recommendedEventId = similarity.getEventA().equals(sourceEventId) ?
-                similarity.getEventB() : similarity.getEventA();
+        Long recommendedEventId = similarity.getEventSimilarityId().getEventA().equals(sourceEventId) ?
+                similarity.getEventSimilarityId().getEventB() : similarity.getEventSimilarityId().getEventA();
         return RecommendedEventProto.newBuilder()
                 .setEventId(recommendedEventId)
                 .setScore(similarity.getScore())
