@@ -13,13 +13,9 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "event_similarity")
-@IdClass(EventSimilarityId.class)
 public class EventSimilarity {
-    @Id
-    private Long eventA;
-
-    @Id
-    private Long eventB;
+    @EmbeddedId
+    private EventSimilarityId eventSimilarityId;
 
     @Column(nullable = false)
     private Double score;
